@@ -20,41 +20,41 @@ namespace StandartInputOutput {
   }
 
   public class TextFile {
-    private string OriginalTextContent { get; set; }
-    public string FilePath { get; set; }
-    public string FileName { get; set; }
-    public string FileExtension { get; set; }
-    public string TextContent { get; set; }
+    private string OriginalContent { get; set; }
+    public string CurrentPath { get; set; }
+    public string Name { get; set; }
+    public string Extension { get; set; }
+    public string Content { get; set; }
 
     public TextFile(string filePath) {
-      this.FilePath = filePath;
-      this.FileName = Path.GetFileName(filePath);
-      this.FileExtension = Path.GetExtension(filePath);
-      this.TextContent = this.OriginalTextContent = File.ReadAllText(filePath);
+      this.CurrentPath = filePath;
+      this.Name = Path.GetFileName(filePath);
+      this.Extension = Path.GetExtension(filePath);
+      this.Content = this.OriginalContent = File.ReadAllText(filePath);
     }
 
     // Update text content of the file
     public void UpdateText(string newText) {
-      this.TextContent = newText;
-      File.WriteAllText(this.FilePath, newText);
+      this.Content = newText;
+      File.WriteAllText(this.CurrentPath, newText);
     }
 
     // Get text content of the file
     public string GetText() {
-      return this.TextContent;
+      return this.Content;
     }
 
     public Memento Save() {
-      return new Memento(this.TextContent);
+      return new Memento(this.Content);
     }
 
     public void Restore(Memento memento) {
-      this.TextContent = memento.TextContent;
-      File.WriteAllText(this.FilePath, this.TextContent);
+      this.Content = memento.TextContent;
+      File.WriteAllText(this.CurrentPath, this.Content);
     }
 
     public void Undo() {
-      this.Restore(new Memento(this.OriginalTextContent));
+      this.Restore(new Memento(this.OriginalContent));
     }
 
     // Serialize the TextFile object to XML
@@ -157,7 +157,7 @@ namespace StandartInputOutput {
           selectedFileIndex = Int32.Parse(Console.ReadLine()) - 1;
 
           TextFile textFile = new TextFile(files[selectedFileIndex]);
-          selectedFileExtension = textFile.FileExtension;
+          selectedFileExtension = textFile.Extension;
           Memento memento = textFile.Save(); // Save the stat
           Console.WriteLine($"Содержимое файла {files[selectedFileIndex]}:");
           Console.WriteLine(textFile.GetText());
@@ -184,18 +184,18 @@ namespace StandartInputOutput {
               break;
             case 3:
               textFile.UpdateText(newContent);
-              textFile.SerializeToJson(SeachTextFilesByKeywords.CurrentDirectoryPath + "\\" + textFile.FileName + ".json");
+              textFile.SerializeToJson(SeachTextFilesByKeywords.CurrentDirectoryPath + "\\" + textFile.Name + ".json");
               break;
             case 4:
               textFile.UpdateText(newContent);
-              textFile.SerializeToXml(SeachTextFilesByKeywords.CurrentDirectoryPath + "\\" + textFile.FileName + ".xml");
+              textFile.SerializeToXml(SeachTextFilesByKeywords.CurrentDirectoryPath + "\\" + textFile.Name + ".xml");
               break;
           }
 
           Console.Write("Продолжить? (1 - да/2 - нет): ");
           userChoose = Int32.Parse(Console.ReadLine());
           if (userChoose == 2) {
-            isProgramWorking = false;
+            isProgramWorking = false; 
           }
         }
       }
